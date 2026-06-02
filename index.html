@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Question for Sophia 💗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --pink-50: #fff0f6;
+    --pink-100: #ffe0ee;
+    --pink-200: #ffc2dd;
+    --pink-300: #ff9ec7;
+    --pink-400: #ff7ab0;
+    --pink-500: #ff5fa2;
+    --pink-600: #f23d8c;
+    --rose: #e91e74;
+    --cream: #fff8fb;
+    --text: #6b2347;
+    --shadow: 0 18px 50px rgba(242, 61, 140, 0.28);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Quicksand', system-ui, sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, #ffe3f1 0%, #ffd0e6 35%, #ffbcdd 70%, #ffacd4 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Floating hearts background */
+  .bg-hearts {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+  .bg-hearts span {
+    position: absolute;
+    bottom: -60px;
+    font-size: 22px;
+    opacity: 0.55;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(-115vh) rotate(360deg); opacity: 0; }
+  }
+
+  .card {
+    position: relative;
+    z-index: 2;
+    width: min(92vw, 560px);
+    background: var(--cream);
+    border-radius: 36px;
+    padding: 54px 40px 60px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border: 3px solid #ffffff;
+    animation: pop 0.7s cubic-bezier(.2,.9,.3,1.4) both;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, var(--pink-200), transparent 70%);
+    border-radius: 50%;
+  }
+  .card::after {
+    content: "";
+    position: absolute;
+    bottom: -70px; right: -50px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, var(--pink-200), transparent 70%);
+    border-radius: 50%;
+  }
+  @keyframes pop {
+    0% { transform: scale(.8) translateY(20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .bear {
+    font-size: 64px;
+    display: inline-block;
+    animation: bob 2.6s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
+  }
+
+  .eyebrow {
+    position: relative;
+    z-index: 1;
+    font-size: 15px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--pink-500);
+    font-weight: 700;
+    margin-top: 6px;
+  }
+
+  h1 {
+    position: relative;
+    z-index: 1;
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(40px, 8vw, 62px);
+    line-height: 1.05;
+    color: var(--rose);
+    margin: 10px 0 8px;
+    text-shadow: 0 3px 0 rgba(255,255,255,0.6);
+  }
+  h1 .name { color: var(--pink-600); }
+
+  .subtitle {
+    position: relative;
+    z-index: 1;
+    font-size: 18px;
+    font-weight: 500;
+    color: #9c4b73;
+    margin-bottom: 34px;
+  }
+
+  .btns {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 70px;
+  }
+
+  button {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    padding: 16px 40px;
+    transition: transform .15s ease, box-shadow .2s ease;
+  }
+
+  .yes {
+    color: #fff;
+    background: linear-gradient(135deg, var(--pink-500), var(--rose));
+    box-shadow: 0 10px 26px rgba(233, 30, 116, 0.45);
+  }
+  .yes:hover {
+    transform: scale(1.08);
+    box-shadow: 0 14px 32px rgba(233, 30, 116, 0.6);
+  }
+
+  .no {
+    color: var(--pink-600);
+    background: #fff;
+    border: 2px solid var(--pink-200);
+    box-shadow: 0 6px 16px rgba(242, 61, 140, 0.18);
+  }
+  /* When the No button starts running, it floats free */
+  .no.running {
+    position: fixed;
+    z-index: 50;
+    margin: 0;
+  }
+
+  .hint {
+    position: relative;
+    z-index: 1;
+    margin-top: 26px;
+    font-size: 14px;
+    color: #b06b8c;
+    min-height: 20px;
+    font-weight: 500;
+  }
+
+  /* ===== YES screen ===== */
+  .yes-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(135deg, #ffd6ea 0%, #ff9ec7 60%, #ff7ab0 100%);
+    animation: fadeIn .6s ease both;
+  }
+  .yes-screen.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .yes-card {
+    background: rgba(255,255,255,0.92);
+    border-radius: 34px;
+    padding: 48px 36px;
+    width: min(92vw, 560px);
+    box-shadow: 0 24px 60px rgba(214, 26, 110, 0.4);
+    border: 3px solid #fff;
+    animation: pop .7s cubic-bezier(.2,.9,.3,1.4) both;
+  }
+  .yes-card .big-bear {
+    font-size: 80px;
+    display: inline-block;
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  .yes-card h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(36px, 7vw, 56px);
+    color: var(--rose);
+    margin: 12px 0 4px;
+  }
+  .yes-card .heartline {
+    font-size: 22px;
+    color: var(--pink-600);
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+  .cute-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 8px auto 0;
+    max-width: 380px;
+  }
+  .cute-list li {
+    background: var(--pink-50);
+    border: 1.5px solid var(--pink-200);
+    border-radius: 18px;
+    padding: 12px 18px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #8a3a63;
+    animation: slideIn .5s ease both;
+  }
+  .cute-list li:nth-child(1) { animation-delay: .2s; }
+  .cute-list li:nth-child(2) { animation-delay: .45s; }
+  .cute-list li:nth-child(3) { animation-delay: .7s; }
+  .cute-list li:nth-child(4) { animation-delay: .95s; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .signed {
+    margin-top: 26px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 30px;
+    color: var(--pink-600);
+  }
+
+  .credit {
+    position: fixed;
+    bottom: 12px;
+    left: 0; right: 0;
+    text-align: center;
+    z-index: 5;
+    font-size: 12px;
+    color: rgba(122, 35, 73, 0.55);
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 44px 24px 48px; }
+    button { padding: 14px 30px; font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+  <div class="bg-hearts" id="bgHearts"></div>
+
+  <!-- Main question card -->
+  <main class="card" id="askCard">
+    <span class="bear">🧸</span>
+    <p class="eyebrow">A little question…</p>
+    <h1>Will you go out<br />with me, <span class="name">Sophia</span>?</h1>
+    <p class="subtitle">Just you, me, and a perfectly cute date 💕</p>
+
+    <div class="btns" id="btnWrap">
+      <button class="yes" id="yesBtn">Yes 💖</button>
+      <button class="no" id="noBtn">No</button>
+    </div>
+
+    <p class="hint" id="hint">(go ahead, try to say no 😏)</p>
+  </main>
+
+  <!-- YES celebration screen -->
+  <section class="yes-screen" id="yesScreen">
+    <div class="yes-card">
+      <span class="big-bear">🥰</span>
+      <h2>Oh, I never doubted it &lt;3</h2>
+      <p class="heartline">You just made me the happiest person 💗</p>
+      <ul class="cute-list">
+        <li>🌸 You're my favorite notification</li>
+        <li>🍦 I already know where we're going first</li>
+        <li>💌 Wear something comfy, I'll bring the flowers</li>
+        <li>✨ This is the start of something adorable</li>
+      </ul>
+      <p class="signed">Yours, Shady 💕</p>
+    </div>
+  </section>
+
+  <p class="credit">made with 💗 by Shady · for Sophia</p>
+
+<script>
+  /* ---- floating hearts background ---- */
+  (function () {
+    const wrap = document.getElementById('bgHearts');
+    const hearts = ['💗','💕','💖','🌸','💞','🧸','✨'];
+    for (let i = 0; i < 22; i++) {
+      const s = document.createElement('span');
+      s.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+      s.style.left = Math.random() * 100 + 'vw';
+      s.style.fontSize = (16 + Math.random() * 26) + 'px';
+      const dur = 9 + Math.random() * 10;
+      s.style.animationDuration = dur + 's';
+      s.style.animationDelay = (-Math.random() * dur) + 's';
+      wrap.appendChild(s);
+    }
+  })();
+
+  /* ---- runaway NO button ---- */
+  const noBtn = document.getElementById('noBtn');
+  const hint = document.getElementById('hint');
+  let dodgeCount = 0;
+
+  const messages = [
+    "Think again 🥺",
+    "Pretty please 💞",
+    "Are you sure? 😳",
+    "Don't be shy 😚",
+    "Give me a chance 🌸",
+    "Reconsider? 🙈",
+    "C'mon, you know you wanna 😏",
+    "My heart can't take a no 💔",
+    "Last chance to say yes! ✨"
+  ];
+
+  function moveNo() {
+    if (!noBtn.classList.contains('running')) {
+      noBtn.classList.add('running');
+    }
+    const w = noBtn.offsetWidth;
+    const h = noBtn.offsetHeight;
+    const pad = 12;
+    const maxX = window.innerWidth - w - pad;
+    const maxY = window.innerHeight - h - pad;
+    const x = Math.max(pad, Math.random() * maxX);
+    const y = Math.max(pad, Math.random() * maxY);
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+
+    hint.textContent = messages[dodgeCount % messages.length];
+    dodgeCount++;
+
+    // make Yes a little more tempting each dodge
+    const yesBtn = document.getElementById('yesBtn');
+    const scale = Math.min(1 + dodgeCount * 0.05, 1.6);
+    yesBtn.style.transform = 'scale(' + scale + ')';
+  }
+
+  // Run away on hover, touch, and any click attempt
+  noBtn.addEventListener('mouseenter', moveNo);
+  noBtn.addEventListener('mousemove', moveNo);
+  noBtn.addEventListener('touchstart', function (e) { e.preventDefault(); moveNo(); }, { passive: false });
+  noBtn.addEventListener('click', function (e) { e.preventDefault(); moveNo(); });
+  noBtn.addEventListener('focus', moveNo);
+
+  /* ---- YES! celebration ---- */
+  const yesScreen = document.getElementById('yesScreen');
+  document.getElementById('yesBtn').addEventListener('click', function () {
+    yesScreen.classList.add('show');
+    burstHearts();
+  });
+
+  function burstHearts() {
+    const emojis = ['💗','💕','💖','🌸','💞','✨','🥰','🧸'];
+    for (let i = 0; i < 60; i++) {
+      const s = document.createElement('span');
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.position = 'fixed';
+      s.style.left = '50%';
+      s.style.top = '50%';
+      s.style.fontSize = (18 + Math.random() * 26) + 'px';
+      s.style.zIndex = 200;
+      s.style.pointerEvents = 'none';
+      document.body.appendChild(s);
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 120 + Math.random() * 320;
+      const tx = Math.cos(angle) * dist;
+      const ty = Math.sin(angle) * dist;
+      s.animate([
+        { transform: 'translate(-50%,-50%) translate(0,0) scale(0.4)', opacity: 1 },
+        { transform: 'translate(-50%,-50%) translate(' + tx + 'px,' + ty + 'px) scale(1.2)', opacity: 0 }
+      ], { duration: 1100 + Math.random() * 700, easing: 'cubic-bezier(.1,.7,.3,1)' });
+      setTimeout(function () { s.remove(); }, 1900);
+    }
+  }
+</script>
+</body>
+</html>
