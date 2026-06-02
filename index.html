@@ -177,7 +177,7 @@
   /* When the No button starts running, it floats free */
   .no.running {
     position: fixed;
-    z-index: 50;
+    z-index: 70;            /* above the bubble so it's NEVER hidden */
     margin: 0;
     transition: left .18s ease, top .18s ease, transform .15s ease;
   }
@@ -396,9 +396,9 @@
   // Keep the bubble glued to the button wherever it runs
   function positionBubble(x, y, w, h) {
     let bx = x + w / 2;
-    let by = y - 50;
-    if (by < 8) { by = y + h + 14; }      // flip below if too near the top
-    bx = Math.min(Math.max(bx, 70), window.innerWidth - 70);
+    let by = y - 64;                       // sit clearly ABOVE the button
+    if (by < 8) { by = y + h + 16; }       // flip below if too near the top
+    bx = Math.min(Math.max(bx, 72), window.innerWidth - 72);
     bubble.style.left = bx + 'px';
     bubble.style.top = by + 'px';
   }
@@ -446,6 +446,26 @@
     // Final clamp: ALWAYS fully on-screen
     nx = Math.min(Math.max(nx, pad), maxX);
     ny = Math.min(Math.max(ny, pad), maxY);
+
+    // Keep a safe distance from the Yes button so they never overlap/clutter
+    const yesBtnEl = document.getElementById('yesBtn');
+    const yr = yesBtnEl.getBoundingClientRect();
+    const yesCX = yr.left + yr.width / 2;
+    const yesCY = yr.top + yr.height / 2;
+    const newCX = nx + w / 2;
+    const newCY = ny + h / 2;
+    let gx = newCX - yesCX;
+    let gy = newCY - yesCY;
+    let gdist = Math.hypot(gx, gy);
+    const minGap = 150;
+    if (gdist < minGap) {
+      if (gdist < 1) { gx = 1; gy = 0; gdist = 1; }
+      // push it away from Yes by the shortfall, then re-clamp on-screen
+      nx = yesCX + (gx / gdist) * minGap - w / 2;
+      ny = yesCY + (gy / gdist) * minGap - h / 2;
+      nx = Math.min(Math.max(nx, pad), maxX);
+      ny = Math.min(Math.max(ny, pad), maxY);
+    }
 
     noBtn.style.left = nx + 'px';
     noBtn.style.top = ny + 'px';
