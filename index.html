@@ -409,68 +409,41 @@
     }
     const w = noBtn.offsetWidth;
     const h = noBtn.offsetHeight;
-    const pad = 16;
-    const maxX = window.innerWidth - w - pad;
-    const maxY = window.innerHeight - h - pad;
+    const pad = 20;
+    const bubbleSpace = 70;   // reserve room at top so the bubble never clips off-screen
+    const minX = pad;
+    const minY = pad + bubbleSpace;
+    const maxX = Math.max(minX, window.innerWidth - w - pad);
+    const maxY = Math.max(minY, window.innerHeight - h - pad);
 
-    // Current center of the button
-    const rect = noBtn.getBoundingClientRect();
-    const curCX = rect.left + w / 2;
-    const curCY = rect.top + h / 2;
-
-    // Bounce AWAY from the cursor so it stays nearby and chaseable
-    const px = (pointerX != null) ? pointerX : curCX;
-    const py = (pointerY != null) ? pointerY : curCY;
-    let dx = curCX - px;
-    let dy = curCY - py;
-    let dist = Math.hypot(dx, dy);
-    if (dist < 8) {                       // cursor near center — pick a random direction
-      const a = Math.random() * Math.PI * 2;
-      dx = Math.cos(a); dy = Math.sin(a);
-    } else {
-      dx /= dist; dy /= dist;
-    }
-    const hop = 150 + Math.random() * 80;          // how far it leaps
-    const wobble = (Math.random() - 0.5) * 1.4;    // a little playful angle
-    const cos = Math.cos(wobble), sin = Math.sin(wobble);
-    const rdx = dx * cos - dy * sin;
-    const rdy = dx * sin + dy * cos;
-
-    let nx = curCX + rdx * hop - w / 2;
-    let ny = curCY + rdy * hop - h / 2;
-
-    // If it would leave the screen, bounce back inward instead (stays visible)
-    if (nx < pad || nx > maxX) { nx = curCX - rdx * hop - w / 2; }
-    if (ny < pad || ny > maxY) { ny = curCY - rdy * hop - h / 2; }
-
-    // Final clamp: ALWAYS fully on-screen
-    nx = Math.min(Math.max(nx, pad), maxX);
-    ny = Math.min(Math.max(ny, pad), maxY);
-
-    // Keep a safe distance from the Yes button so they never overlap/clutter
+    // Yes button center, to keep a safe distance from it
     const yesBtnEl = document.getElementById('yesBtn');
     const yr = yesBtnEl.getBoundingClientRect();
     const yesCX = yr.left + yr.width / 2;
     const yesCY = yr.top + yr.height / 2;
-    const newCX = nx + w / 2;
-    const newCY = ny + h / 2;
-    let gx = newCX - yesCX;
-    let gy = newCY - yesCY;
-    let gdist = Math.hypot(gx, gy);
-    const minGap = 150;
-    if (gdist < minGap) {
-      if (gdist < 1) { gx = 1; gy = 0; gdist = 1; }
-      // push it away from Yes by the shortfall, then re-clamp on-screen
-      nx = yesCX + (gx / gdist) * minGap - w / 2;
-      ny = yesCY + (gy / gdist) * minGap - h / 2;
-      nx = Math.min(Math.max(nx, pad), maxX);
-      ny = Math.min(Math.max(ny, pad), maxY);
+    const minGap = 170;
+
+    // Pick a random on-screen spot that's far enough from Yes.
+    // Guaranteed valid: we always clamp, and fall back to the best of N tries.
+    let nx = minX, ny = minY, bestNx = minX, bestNy = minY, bestGap = -1;
+    for (let i = 0; i < 24; i++) {
+      const tx = minX + Math.random() * (maxX - minX);
+      const ty = minY + Math.random() * (maxY - minY);
+      const cx = tx + w / 2, cy = ty + h / 2;
+      const gap = Math.hypot(cx - yesCX, cy - yesCY);
+      if (gap > bestGap) { bestGap = gap; bestNx = tx; bestNy = ty; }
+      if (gap >= minGap) { nx = tx; ny = ty; bestGap = gap; break; }
+      nx = bestNx; ny = bestNy;
     }
+
+    // Hard clamp — the committed position is ALWAYS fully on-screen
+    nx = Math.min(Math.max(nx, minX), maxX);
+    ny = Math.min(Math.max(ny, minY), maxY);
 
     noBtn.style.left = nx + 'px';
     noBtn.style.top = ny + 'px';
 
-    // Teasing bubble stays visible and follows the button
+    // Teasing bubble uses the SAME coordinates, so it's always glued to the button
     bubble.textContent = messages[dodgeCount % messages.length];
     positionBubble(nx, ny, w, h);
     bubble.classList.add('show');   // no auto-hide — it keeps showing
