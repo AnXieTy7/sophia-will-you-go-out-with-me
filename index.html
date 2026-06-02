@@ -181,6 +181,39 @@
     margin: 0;
   }
 
+  /* Cute teasing speech bubble that follows the No button */
+  .tease-bubble {
+    position: fixed;
+    z-index: 60;
+    background: #fff;
+    color: var(--pink-600);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 10px 16px;
+    border-radius: 18px;
+    border: 2px solid var(--pink-200);
+    box-shadow: 0 8px 22px rgba(242, 61, 140, 0.3);
+    pointer-events: none;
+    white-space: nowrap;
+    transform: translate(-50%, 0) scale(0.6);
+    opacity: 0;
+    transition: transform .18s cubic-bezier(.2,.9,.3,1.5), opacity .18s ease, left .18s ease, top .18s ease;
+  }
+  .tease-bubble.show {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  .tease-bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #fff;
+  }
+
   .hint {
     position: relative;
     z-index: 1;
@@ -302,6 +335,9 @@
     <p class="hint" id="hint">(go ahead, try to say no 😏)</p>
   </main>
 
+  <!-- Floating teasing bubble for the No button -->
+  <div class="tease-bubble" id="teaseBubble"></div>
+
   <!-- YES celebration screen -->
   <section class="yes-screen" id="yesScreen">
     <div class="yes-card">
@@ -340,7 +376,9 @@
   /* ---- runaway NO button ---- */
   const noBtn = document.getElementById('noBtn');
   const hint = document.getElementById('hint');
+  const bubble = document.getElementById('teaseBubble');
   let dodgeCount = 0;
+  let bubbleTimer = null;
 
   const messages = [
     "Think again 🥺",
@@ -368,7 +406,19 @@
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
 
-    hint.textContent = messages[dodgeCount % messages.length];
+    // Show the teasing message in a cute bubble above the running button
+    const msg = messages[dodgeCount % messages.length];
+    bubble.textContent = msg;
+    let bx = x + w / 2;
+    let by = y - 50;
+    if (by < 8) { by = y + h + 14; }      // flip below if too high
+    bx = Math.min(Math.max(bx, 70), window.innerWidth - 70);
+    bubble.style.left = bx + 'px';
+    bubble.style.top = by + 'px';
+    bubble.classList.add('show');
+    clearTimeout(bubbleTimer);
+    bubbleTimer = setTimeout(function () { bubble.classList.remove('show'); }, 1400);
+
     dodgeCount++;
 
     // make Yes a little more tempting each dodge
